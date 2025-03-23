@@ -1,17 +1,15 @@
 /// <reference types="vitest" />
 import ssg from '@hono/vite-ssg'
 import mdx from '@mdx-js/rollup'
-import rehypeExtractToC from '@stefanprobst/rehype-extract-toc'
-import rehypeExtractToCExport from '@stefanprobst/rehype-extract-toc/mdx'
 import tailwindcss from '@tailwindcss/vite'
 import honox from 'honox/vite'
 import remarkFrontmatter from 'remark-frontmatter'
 import remarkGfm from 'remark-gfm'
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import { defineConfig } from 'vite'
-import { rehypeMDXHeadingEnhancement } from './utils/rehypeMDXHeadingEnhancement'
 import { remarkMDXCodeMeta } from './utils/remarkMDXCodeMeta'
 import { remarkMDXGitHubBlockquoteAlert } from './utils/remarkMDXGitHubBlockquoteAlert'
+import { remarkMDXHeadingEnhancement } from './utils/remarkMDXHeadingEnhancement'
 
 const entry = './app/server.ts'
 
@@ -27,8 +25,8 @@ export default defineConfig({
         remarkGfm,
         remarkMDXGitHubBlockquoteAlert,
         remarkMDXCodeMeta,
+        remarkMDXHeadingEnhancement,
       ],
-      rehypePlugins: [rehypeMDXHeadingEnhancement, rehypeExtractToC, rehypeExtractToCExport],
       elementAttributeNameCase: 'react',
       providerImportSource: '/app/routes/_components/common/MDXComponents/MDXComponents.tsx',
     }),

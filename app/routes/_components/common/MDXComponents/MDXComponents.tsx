@@ -203,7 +203,7 @@ export const useMDXComponents = (): MDXComponents => {
       )
     },
     a: ({ children, href, className, ...props }) => {
-      const isInternal = href.startsWith('/') && !href.startsWith('//')
+      const isInternal = (href.startsWith('/') && !href.startsWith('//')) || href.startsWith('#')
       return (
         <a
           {...props}
