@@ -9,8 +9,8 @@ import remarkFrontmatter from 'remark-frontmatter'
 import remarkGfm from 'remark-gfm'
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import { defineConfig } from 'vite'
-import { rehypeMDXCodeMeta } from './utils/rehypeMDXCodeMeta'
 import { rehypeMDXHeadingEnhancement } from './utils/rehypeMDXHeadingEnhancement'
+import { remarkMDXCodeMeta } from './utils/remarkMDXCodeMeta'
 import { remarkMDXGitHubBlockquoteAlert } from './utils/remarkMDXGitHubBlockquoteAlert'
 
 const entry = './app/server.ts'
@@ -26,13 +26,9 @@ export default defineConfig({
         remarkMdxFrontmatter,
         remarkGfm,
         remarkMDXGitHubBlockquoteAlert,
+        remarkMDXCodeMeta,
       ],
-      rehypePlugins: [
-        rehypeMDXCodeMeta,
-        rehypeMDXHeadingEnhancement,
-        rehypeExtractToC,
-        rehypeExtractToCExport,
-      ],
+      rehypePlugins: [rehypeMDXHeadingEnhancement, rehypeExtractToC, rehypeExtractToCExport],
       elementAttributeNameCase: 'react',
       providerImportSource: '/app/routes/_components/common/MDXComponents/MDXComponents.tsx',
     }),
