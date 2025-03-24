@@ -1,20 +1,27 @@
-import type { JSXNode } from 'hono/jsx'
-
-export const getAnchorId = (children: string | JSXNode): string | null => {
-  // Anchor only supported when string only in heading
-  if (typeof children === 'string') {
-    return children
-      .toLowerCase()
-      .replace(/[^a-z0-9 ]/g, '')
-      .replace(/ /g, '-')
+export const getCodeLanguageLabel = (language: string | undefined) => {
+  if (language === undefined) {
+    return 'plain'
   }
-  return null
-}
 
-export const getAnchorTitle = (children: string | JSXNode): string | null => {
-  // Anchor only supported when string only in heading
-  if (typeof children === 'string') {
-    return children
+  const languageMap: Record<string, string> = {
+    javascript: 'JavaScript',
+    js: 'JavaScript',
+    jsx: 'JavaScript',
+    typescript: 'TypeScript',
+    ts: 'TypeScript',
+    tsx: 'TypeScript',
+    html: 'HTML',
+    css: 'CSS',
+    json: 'JSON',
+    md: 'Markdown',
+    mdx: 'Markdown',
+    py: 'Python',
+    go: 'Go',
+    java: 'Java',
+    kotlin: 'Kotlin',
+    bash: 'Bash',
+    sh: 'Shell',
   }
-  return null
+
+  return languageMap[language] || language
 }

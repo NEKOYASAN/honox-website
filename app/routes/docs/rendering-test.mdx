@@ -4,6 +4,10 @@ nav_title: Rendering Test
 description: Test MDX rendering
 ---
 
+<test codes={[{
+    code: 'test',
+}]} />
+
 > [!IMPORTANT]
 > This page exists for Rendering test. <br />
 > **Please remove or exclude it for release.**
@@ -84,6 +88,38 @@ export const WithFileName = () => {
     return (
         <div>
             <h1>WithFileName</h1>
+        </div>
+    )
+}
+```
+
+
+
+```jsx filename=Switcher.jsx switcher
+export const SwitcherJSX = ({
+  className
+}) => {
+    return (
+        <div className={className}>
+            <h1>Switcher JavaScript</h1>
+        </div>
+    )
+}
+```
+
+```tsx filename=Switcher.tsx switcher
+import type { FC } from 'react'
+
+type SwitcherJSXProps = {
+  className?: string
+}
+
+export const SwitcherTSX: FC<SwitcherJSXProps> = ({
+  className
+}) => {
+    return (
+        <div className={className}>
+            <h1>Switcher TypeScript</h1>
         </div>
     )
 }

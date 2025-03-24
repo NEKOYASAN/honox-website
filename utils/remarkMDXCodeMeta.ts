@@ -1,50 +1,118 @@
+import { valueToEstree } from 'estree-util-value-to-estree'
 import type { Root } from 'mdast'
-import type { MdxJsxAttribute } from 'mdast-util-mdx-jsx'
 import type { Plugin } from 'unified'
-import { visit } from 'unist-util-visit'
+import { is } from 'unist-util-is'
+import { visit, SKIP } from 'unist-util-visit'
 
-const parseMetaStringToMdxJsxAttributes = (meta?: unknown) => {
-  const mdxJsxAttributes: MdxJsxAttribute[] = []
+const parseMetaStringToObject = (meta?: unknown) => {
+  const metaObject: { [key: string]: string | true } = {}
   if (!meta || typeof meta !== 'string') {
-    return mdxJsxAttributes
+    return metaObject
   }
   const regex = /\b([-\w]+)(?:=(?:"([^"]*)"|'([^']*)'|([^"'\s]+)))?/g
   let match
 
   while ((match = regex.exec(meta)) !== null) {
-    mdxJsxAttributes.push({
-      type: 'mdxJsxAttribute',
-      name: match[1],
-      value: !match[2] && !match[3] && !match[4] ? 'true' : match[2] || match[3] || match[4],
-    })
+    metaObject[match[1]] =
+      !match[2] && !match[3] && !match[4] ? true : match[2] || match[3] || match[4]
   }
 
-  return mdxJsxAttributes
+  return metaObject
+}
+
+type Code = {
+  language?: string
+  [key: string]: string | undefined
+  codeText: string
 }
 
 export const remarkMDXCodeMeta: Plugin<[], Root> = () => {
   return (tree) => {
+    let parentCodeBlockIndex: number | null = null
+    let codes: Code[] = []
     visit(tree, 'code', (node, index, parent) => {
       if (index === undefined || parent === undefined) {
         return
       }
-      parent.children[index] = {
-        type: 'mdxJsxFlowElement',
-        name: 'codeblock',
-        attributes: [
-          {
-            type: 'mdxJsxAttribute',
-            name: 'language',
-            value: node.lang,
-          },
-          ...parseMetaStringToMdxJsxAttributes(node.meta),
-          {
-            type: 'mdxJsxAttribute',
-            name: 'children',
-            value: node.value,
-          },
-        ],
-        children: [],
+
+      const codeObject: Code = {
+        language: node.lang ? node.lang : undefined,
+        ...parseMetaStringToObject(node.meta),
+        codeText: node.value,
+      }
+
+      if (codeObject.switcher) {
+        codes.push(codeObject)
+        const nextNode = parent.children[index + 1]
+        if (nextNode && is(nextNode, 'code')) {
+          const nextNodeMetaObject = parseMetaStringToObject(nextNode.meta)
+          if (nextNodeMetaObject.switcher) {
+            if (parentCodeBlockIndex === null) {
+              parentCodeBlockIndex = index
+            }
+            parent.children.splice(index, 1)
+            return [SKIP, index]
+          }
+        }
+        const nodeIndex = parentCodeBlockIndex !== null ? parentCodeBlockIndex : index
+        parent.children[nodeIndex] = {
+          type: 'mdxJsxFlowElement',
+          name: 'codeblock',
+          attributes: [
+            {
+              type: 'mdxJsxAttribute',
+              name: 'codes',
+              value: {
+                type: 'mdxJsxAttributeValueExpression',
+                value: JSON.stringify(codes),
+                data: {
+                  estree: {
+                    type: 'Program',
+                    sourceType: 'module',
+                    body: [
+                      {
+                        type: 'ExpressionStatement',
+                        expression: valueToEstree(codes),
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+          ],
+          children: [],
+        }
+        parentCodeBlockIndex = null
+        codes = []
+        return [SKIP, index]
+      } else {
+        parent.children[index] = {
+          type: 'mdxJsxFlowElement',
+          name: 'codeblock',
+          attributes: [
+            {
+              type: 'mdxJsxAttribute',
+              name: 'codes',
+              value: {
+                type: 'mdxJsxAttributeValueExpression',
+                value: JSON.stringify([codeObject]),
+                data: {
+                  estree: {
+                    type: 'Program',
+                    sourceType: 'module',
+                    body: [
+                      {
+                        type: 'ExpressionStatement',
+                        expression: valueToEstree([codeObject]),
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+          ],
+          children: [],
+        }
       }
     })
   }
