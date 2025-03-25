@@ -8,7 +8,8 @@ import { getCodeLanguageLabel } from './util'
 type CodeBlockInnerProps = {
   codes: {
     language?: string
-    [key: string]: string | undefined
+    switcher?: string | boolean
+    [key: string]: string | boolean | undefined
     codeText: string
     highlightedCodeHTML?: string
   }[]
@@ -36,16 +37,19 @@ export const SwitchableCodeBlock = ({ codes, className, ...props }: CodeBlockInn
           }
         >
           <div className='flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300'>
-            {selectedCode.language ? (
-              <CodeLanguageIcon language={selectedCode.language} className={'size-4'} />
-            ) : null}
+            <CodeLanguageIcon
+              colored={true}
+              language={selectedCode.language}
+              switcher={selectedCode.switcher}
+              className={'size-4'}
+            />
             {selectedCode.filename ? <span>{selectedCode.filename}</span> : null}
           </div>
           <div className='flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300'>
             {codes.length > 1 ? (
               <select
                 className={
-                  'cursor-pointer rounded-md py-1 pr-1.5 transition-colors hover:bg-black/20 dark:hover:bg-white/20'
+                  'cursor-pointer rounded-sm py-1 pr-1.5 transition-colors hover:bg-black/20 dark:hover:bg-white/20'
                 }
                 value={codeIndex}
                 onChange={(e) => {
@@ -58,7 +62,9 @@ export const SwitchableCodeBlock = ({ codes, className, ...props }: CodeBlockInn
                 {codes.map((code, index) => {
                   return (
                     <option key={index} value={index}>
-                      {getCodeLanguageLabel(code.language)}
+                      {code.switcher && typeof code.switcher === 'string'
+                        ? code.switcher
+                        : getCodeLanguageLabel(code.language)}
                     </option>
                   )
                 })}
@@ -68,28 +74,60 @@ export const SwitchableCodeBlock = ({ codes, className, ...props }: CodeBlockInn
             <CopyButton text={selectedCode.codeText} />
           </div>
         </div>
-      ) : (
-        <CopyButton
-          text={selectedCode.codeText}
-          className={
-            'absolute top-2 right-2 opacity-0 transition-[opacity_backgroud-color] group-hover:opacity-100'
-          }
-        />
-      )}
-      {selectedCode.highlightedCodeHTML ? (
+      ) : codes.length > 1 ? (
         <div
           className={
-            '[&_pre]:overflow-x-auto [&_pre]:px-2 [&_pre]:py-4 dark:[&_pre]:!bg-(--shiki-dark-bg) dark:[&_span]:!bg-(--shiki-dark-bg) dark:[&_span]:!text-(--shiki-dark)'
+            'flex items-center overflow-x-auto border-b border-gray-300 px-2 dark:border-gray-700'
           }
-          dangerouslySetInnerHTML={{
-            __html: selectedCode.highlightedCodeHTML,
-          }}
-        />
-      ) : (
-        <pre className={'overflow-x-auto bg-gray-100 px-2 py-4 dark:bg-gray-900'}>
-          <code className={'block'}>{selectedCode.codeText}</code>
-        </pre>
-      )}
+        >
+          {codes.map((code, index) => {
+            return (
+              <button
+                data-active={index === codeIndex}
+                className='relative flex cursor-pointer items-center gap-2 px-3 py-3 text-sm text-gray-600 transition-colors after:absolute after:right-1 after:bottom-0 after:left-1 after:h-[2px] after:bg-orange-600 after:opacity-0 after:transition-opacity after:content-[""] data-active:text-gray-800 data-active:after:opacity-100 dark:text-gray-300 dark:after:bg-orange-400 data-active:dark:text-gray-100'
+                key={index}
+                onClick={() => {
+                  setCodeIndex(index)
+                }}
+              >
+                <CodeLanguageIcon
+                  colored={true}
+                  language={code.language}
+                  switcher={code.switcher}
+                  className={'size-3'}
+                />
+                {code.switcher && typeof code.switcher === 'string'
+                  ? code.switcher
+                  : (code.language ?? null)}
+              </button>
+            )
+          })}
+        </div>
+      ) : null}
+      <div className={'relative'}>
+        {selectedCode.highlightedCodeHTML ? (
+          <div
+            className={
+              '[&_pre]:overflow-x-auto [&_pre]:px-4 [&_pre]:py-4 dark:[&_pre]:!bg-(--shiki-dark-bg) dark:[&_span]:!bg-(--shiki-dark-bg) dark:[&_span]:!text-(--shiki-dark)'
+            }
+            dangerouslySetInnerHTML={{
+              __html: selectedCode.highlightedCodeHTML,
+            }}
+          />
+        ) : (
+          <pre className={'overflow-x-auto bg-gray-100 px-2 py-4 dark:bg-gray-900'}>
+            <code className={'block'}>{selectedCode.codeText}</code>
+          </pre>
+        )}
+        {!(selectedCode.language && selectedCode.filename) ? (
+          <CopyButton
+            text={selectedCode.codeText}
+            className={
+              'absolute top-2 right-2 opacity-0 transition-[opacity_backgroud-color] group-hover:opacity-100'
+            }
+          />
+        ) : null}
+      </div>
     </div>
   )
 }

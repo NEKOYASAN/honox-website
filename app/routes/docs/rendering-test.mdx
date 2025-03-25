@@ -4,10 +4,6 @@ nav_title: Rendering Test
 description: Test MDX rendering
 ---
 
-<test codes={[{
-    code: 'test',
-}]} />
-
 > [!IMPORTANT]
 > This page exists for Rendering test. <br />
 > **Please remove or exclude it for release.**
@@ -69,6 +65,10 @@ export const Test = () => {
 
 ```
 
+```sh filename=Terminal
+echo "Hello World"
+```
+
 ```js filename=WithFileName.js
 const test = "withFileName JS"
 ```
@@ -93,7 +93,7 @@ export const WithFileName = () => {
 }
 ```
 
-
+**Select Switcher**
 
 ```jsx filename=Switcher.jsx switcher
 export const SwitcherJSX = ({
@@ -107,7 +107,7 @@ export const SwitcherJSX = ({
 }
 ```
 
-```tsx filename=Switcher.tsx switcher
+```tsx filename=Switcher.tsx switcher="Type"
 import type { FC } from 'react'
 
 type SwitcherJSXProps = {
@@ -124,6 +124,34 @@ export const SwitcherTSX: FC<SwitcherJSXProps> = ({
     )
 }
 ```
+
+**Tab Switcher**
+
+```sh switcher="npm"
+npm install honox hono
+```
+
+```sh switcher="yarn"
+yarn add honox hono
+```
+
+```sh switcher="pnpm"
+pnpm add honox hono
+```
+
+```sh switcher="bun"
+bun add honox hono
+```
+
+```sh switcher="deno"
+deno init --npm hono@latest my-app
+```
+
+```sh switcher
+echo "Hello World"
+```
+
+
 
 * Unordered List
 - Unordered List

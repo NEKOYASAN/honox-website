@@ -5,7 +5,8 @@ import { SwitchableCodeBlock } from './$SwitchableCodeBlock'
 type CodeBlockProps = {
   codes: {
     language?: string
-    [key: string]: string | undefined
+    switcher?: string | boolean
+    [key: string]: string | boolean | undefined
     codeText: string
   }[]
 } & JSX.IntrinsicElements['pre']
@@ -27,7 +28,8 @@ export const CodeBlock = async ({ codes, ...props }: CodeBlockProps) => {
       value
     ): {
       language?: string
-      [key: string]: string | undefined
+      switcher?: string | boolean
+      [key: string]: string | boolean | undefined
       codeText: string
       highlightedCodeHTML?: string
     } => {
