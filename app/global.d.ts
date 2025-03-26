@@ -8,6 +8,12 @@ type Frontmatter = {
   exclude_from_nav?: boolean | null
 }
 
+type ToC = {
+  value: string
+  depth: number
+  id: string
+  children?: ToC[]
+}
 declare module 'hono' {
   interface Env {}
 
@@ -22,5 +28,5 @@ declare module 'hono' {
 
 declare module '*.mdx' {
   export const frontmatter: Frontmatter
-  export const tableOfContents: Toc
+  export const tableOfContents: ToC[]
 }

@@ -4,18 +4,12 @@ import { toString } from 'mdast-util-to-string'
 import type { Plugin } from 'unified'
 import { define } from 'unist-util-mdx-define'
 import { visit } from 'unist-util-visit'
+import type { ToC } from '../app/global'
 
-export type ToCEntry = {
-  value: string
-  depth: number
-  id: string
-  children?: ToCEntry[]
-}
-
-export const createToCTree = (headings: Omit<ToCEntry, 'children'>[]): ToCEntry[] => {
+export const createToCTree = (headings: Omit<ToC, 'children'>[]): ToC[] => {
   const root = { depth: 0, value: '', id: '', children: [] }
-  const parents: ToCEntry[] = []
-  let previous: ToCEntry = root
+  const parents: ToC[] = []
+  let previous: ToC = root
   headings.forEach((heading) => {
     if (heading.depth > previous.depth) {
       if (previous.children === undefined) {
@@ -36,7 +30,7 @@ export const createToCTree = (headings: Omit<ToCEntry, 'children'>[]): ToCEntry[
 
 export const remarkMDXHeadingEnhancement: Plugin<[], Root> = () => {
   return (tree, file) => {
-    const headings: Omit<ToCEntry, 'children'>[] = []
+    const headings: Omit<ToC, 'children'>[] = []
 
     visit(tree, 'heading', (node, index, parent) => {
       if (index === undefined || parent === undefined) {

@@ -8,7 +8,9 @@ export const Footer = () => {
       }
     >
       <div
-        className={'mx-auto flex w-full max-w-[1300px] flex-row items-start justify-between px-8'}
+        className={
+          'mx-auto flex w-full max-w-[1300px] flex-col-reverse items-start justify-between gap-8 px-8 sm:flex-row'
+        }
       >
         <div className={'text-sm text-gray-600 dark:text-gray-400'}>
           <p>Released under the MIT License.</p>

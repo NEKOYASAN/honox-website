@@ -58,7 +58,10 @@ export const SideNav = (props: SideNavProps) => {
   const groupedDocs = getGroupedDocs(docs)
 
   return (
-    <nav class={'sticky top-28 h-[calc(100vh-112px)] w-[200px] shrink-0'} {...props}>
+    <nav
+      class={'sticky top-28 hidden h-[calc(100vh-112px)] w-[200px] shrink-0 md:block'}
+      {...props}
+    >
       <ul class={'text-sm font-semibold text-gray-900 dark:text-gray-200'}>
         {groupedDocs.map((doc) => (
           <li key={doc.id} class={'pb-2'}>
