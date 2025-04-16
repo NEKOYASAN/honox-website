@@ -1,5 +1,6 @@
 import { SocialGitHubIcon } from '../../icons/SocialGitHubIcon'
 import { SocialXIcon } from '../../icons/SocialXIcon'
+import { HeaderMenu } from './$HeaderMenu'
 import { HeaderLink } from './HeaderLink'
 import { HeaderSocialLink } from './HeaderSocialLink'
 
@@ -14,7 +15,7 @@ export const Header = () => {
         <a href={'/'}>
           <h1 class={'text-xl font-bold'}>HonoX</h1>
         </a>
-        <nav class={'flex items-center gap-4'}>
+        <nav class={'hidden items-center gap-4 sm:flex'}>
           <HeaderLink href={'/docs'}>Docs</HeaderLink>
           <HeaderLink href={'/examples'}>Examples</HeaderLink>
           <HeaderLink href={'https://github.com/orgs/honojs/discussions'} isExternal>
@@ -25,6 +26,7 @@ export const Header = () => {
             aria-orientation={'vertical'}
             class={'mx-1 h-6 w-[1px] bg-gray-800 opacity-30 dark:bg-gray-400'}
           />
+
           <HeaderSocialLink
             href={'https://github.com/honojs'}
             icon={<SocialGitHubIcon class={'h-full w-full'} />}
@@ -34,6 +36,7 @@ export const Header = () => {
             icon={<SocialXIcon class={'h-full w-full'} />}
           />
         </nav>
+        <HeaderMenu />
       </div>
     </header>
   )
